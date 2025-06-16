@@ -912,11 +912,10 @@ class DiscordBridgeBot(commands.Bot):
                 self.dispatch("hypixel_guild_invite_recieved", playername)
                 await self.send_debug_message("Sending invite recieved message")
                 await self.send_message(embed=embed)
-            elif "has joined the party." in message:
+            elif "joined the party." in message:
                 if self._current_warpout_future and not self._current_warpout_future.done():
                     print(f"{Color.CYAN}Discord{Color.RESET} > User joined party, starting warp sequence.")
                     await self._handle_warp_sequence()
-
 
             elif message.strip() == "":
                 return
