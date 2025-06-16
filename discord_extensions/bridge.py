@@ -245,41 +245,17 @@ class Bridge(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def online(self, ctx):
         await self.bot.mineflayer_bot.chat("/g online")
-        if DiscordConfig.officerChannel == ctx.channel.id:
-            await ctx.reply(
-                embed=discord.Embed(
-                    description=f"Sent the `/guild online` command. Output will appear in <#{DiscordConfig.channel}>.",
-                    color=discord.Color.blurple()
-                ),
-                delete_after=10,
-            )
 
     @commands.command(name="list")
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def _list(self, ctx):
         await self.bot.mineflayer_bot.chat("/g list")
-        if DiscordConfig.officerChannel == ctx.channel.id:
-            await ctx.reply(
-                embed=discord.Embed(
-                    description=f"Sent the `/guild list` command. Output will appear in <#{DiscordConfig.channel}>.",
-                    color=discord.Color.blurple()
-                ),
-                delete_after=10,
-            )
 
     @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def top(self, ctx, date_int = 0):
         if date_int <= self.date_limit and date_int >= 0:
             await self.bot.mineflayer_bot.chat(f"/g top {date_int}")
-            if DiscordConfig.officerChannel == ctx.channel.id:
-                await ctx.reply(
-                    embed=discord.Embed(
-                        description=f"Sent the `/guild top` command. Output will appear in <#{DiscordConfig.channel}>.",
-                        color=discord.Color.blurple()
-                    ),
-                    delete_after=10,
-                )
         else:
             embed = discord.Embed(
                 description="Can only view 30 days of history.",
@@ -291,14 +267,37 @@ class Bridge(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def info(self, ctx):
         await self.bot.mineflayer_bot.chat("/g info")
-        if DiscordConfig.officerChannel == ctx.channel.id:
-            await ctx.reply(
-                embed=discord.Embed(
-                    description=f"Sent the `/guild info` command. Output will appear in <#{DiscordConfig.channel}>.",
-                    color=discord.Color.blurple()
-                ),
-                delete_after=10,
+
+    @commands.command()
+    @has_command_role
+    async def warpout(self, ctx, username):
+        msg = await ctx.reply(
+            embed=discord.Embed(
+                description="Sending warpout command...",
+                color=discord.Color.gold()
             )
+        )
+        result = await self.bot.send_warpout(username)
+        await self.bot.send_debug_message(f"Warpout to {username}: {result}")
+        if not result[0] and result[1] == "timeout":
+            embed = discord.Embed(
+                description="User did not accept the party invite in time.",
+                color=discord.Color.red()
+            )
+            await msg.edit(embed=embed)
+        elif not result[0]:
+            embed = discord.Embed(
+                description=f"Could not warpout {username}. Error: {result[1]}",
+                color=discord.Color.red()
+            )
+            await msg.edit(embed=embed)
+        else:
+            embed = discord.Embed(
+                description=f"Warped {username} successfully!",
+                color=discord.Color.green()
+            )
+            await msg.edit(embed=embed)
+
 
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.channel)

@@ -17,7 +17,7 @@ HELP_EMBED.add_field(
             f"``{DiscordConfig.prefix}promote <username>`` Promotes the given user\n"
             f"``{DiscordConfig.prefix}demote <username>`` Demotes the given user\n"
             f"``{DiscordConfig.prefix}setrank <username> <rank>`` Sets the given user to a specific rank\n"
-            f"``{DiscordConfig.prefix}kick <username> [reason]`` Kicks the given user\n"
+            f"``{DiscordConfig.prefix}kick <username> <reason>`` Kicks the given user\n"
             f"``{DiscordConfig.prefix}notifications`` Toggles join / leave notifications\n"
             f"``{DiscordConfig.prefix}online`` Shows the online members\n"
             f"``{DiscordConfig.prefix}list`` Shows the list of members\n"
@@ -27,7 +27,8 @@ HELP_EMBED.add_field(
             f"``{DiscordConfig.prefix}toggleaccept`` Toggles auto accepting members joining the guild\n"
             f"``{DiscordConfig.prefix}mute <username> <time>`` Mutes the user for a specific time\n"
             f"``{DiscordConfig.prefix}unmute <username>`` Unmutes the user\n"
-            f"``{DiscordConfig.prefix}log [params]`` Shows guild audit logs",
+            f"``{DiscordConfig.prefix}log [params]`` Shows guild audit logs\n"
+            f"``{DiscordConfig.prefix}warpout <user>`` Warps a user out of their current lobby",
     inline=False
 )
 HELP_EMBED.add_field(
@@ -38,7 +39,7 @@ HELP_EMBED.add_field(
             "Override Role: " + (f"<@&{DiscordConfig.overrideRole}>" if DiscordConfig.overrideRole else "❌") + "\n",
     inline=False
 )
-HELP_EMBED.set_footer(text=f"Made by SkyKings")
+HELP_EMBED.set_footer(text=f"Made by Swig")
 
 class Generic(commands.Cog):
     def __init__(self, bot):

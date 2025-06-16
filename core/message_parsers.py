@@ -291,7 +291,6 @@ class GuildMessageParser:
                 elif key == 'Guild Exp':
                     exp_rank = value.split()
                     guild_data['total_exp'] = exp_rank[0]
-                    guild_data['rank'] = exp_rank[1].strip('()')
                 elif key == 'Guild Level':
                     guild_data['level'] = value
                 else:
