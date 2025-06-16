@@ -234,6 +234,24 @@ class DiscordBridgeBot(commands.Bot):
             traceback.print_exc()
         print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor has stopped.")
 
+    async def _handle_warp_sequence(self):
+        try:
+            await self.mineflayer_bot.chat("/l")
+            await asyncio.sleep(2.5)
+            await self.mineflayer_bot.chat("/p warp")
+            await asyncio.sleep(0.5)
+            await self.mineflayer_bot.chat("/p disband")
+            if self._current_warpout_future and not self._current_warpout_future.done():
+                self._current_warpout_future.set_result((True, "success"))
+        except Exception as e:
+            print(f"{Color.CYAN}Discord{Color.RESET} > Warpout error during warp sequence: {e}")
+            traceback.print_exc()
+            if self._current_warpout_future and not self._current_warpout_future.done():
+                self._current_warpout_future.set_result((False, "error"))
+        finally:
+            self._current_warpout_future = None
+
+
     async def _process_invites(self):
         if self.invite_queue is None:
             self.invite_queue = asyncio.Queue()
