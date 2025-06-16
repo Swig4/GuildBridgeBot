@@ -208,7 +208,7 @@ class DiscordBridgeBot(commands.Bot):
                 print(f"{Color.CYAN}Discord{Color.RESET} > Processing warpout for {username}")
                 self._current_warpout_future = fut
                 await self.mineflayer_bot.chat(f"/p {username}")
-    
+
                 try:
                     await asyncio.wait_for(fut, timeout=15)
                 except asyncio.TimeoutError:
@@ -216,16 +216,16 @@ class DiscordBridgeBot(commands.Bot):
                         fut.set_result((False, "timeout"))
                         print(f"{Color.CYAN}Discord{Color.RESET} > Warpout timed out.")
                     continue
-                
+
                 await self.mineflayer_bot.chat("/l")
                 await asyncio.sleep(2.5)
                 await self.mineflayer_bot.chat("/p warp")
                 await asyncio.sleep(0.5)
                 await self.mineflayer_bot.chat("/p disband")
-    
+
                 if not fut.done():
                     fut.set_result((True, "success"))
-    
+
                 self._current_warpout_future = None
         except asyncio.CancelledError:
             pass
@@ -233,8 +233,6 @@ class DiscordBridgeBot(commands.Bot):
             print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor error: {e}")
             traceback.print_exc()
         print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor has stopped.")
-
-
 
     async def _process_invites(self):
         if self.invite_queue is None:
@@ -905,6 +903,9 @@ class DiscordBridgeBot(commands.Bot):
                 self.dispatch("hypixel_guild_invite_recieved", playername)
                 await self.send_debug_message("Sending invite recieved message")
                 await self.send_message(embed=embed)
+            elif "has joined the party." in message and hasattr(self, "_current_warpout_future") and self._current_warpout_future:
+                print(f"{Color.CYAN}Discord{Color.RESET} > User joined party, starting warp sequence.")
+                asyncio.create_task(self._handle_warp_sequence())
 
             elif message.strip() == "":
                 return

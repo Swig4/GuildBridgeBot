@@ -112,10 +112,6 @@ class MinecraftBotManager:
                 if SettingsConfig.printChat:
                     print(f"{Color.GREEN}Minecraft{Color.RESET} > Chat: {message}")
 
-                # Detect if someone joined the party (for warpout)
-                if "has joined the party." in message and hasattr(self, "_current_warpout_future") and self._current_warpout_future:
-                    self._current_warpout_future.set_result((True, "joined"))
-
                 if message.startswith("Guild > " + self.bot.username) or message.startswith(
                         "Officer > " + self.bot.username
                 ):
