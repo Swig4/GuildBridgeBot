@@ -71,7 +71,7 @@ Follow these instructions to copy the repository to a new server.
 
 4. **Clone the Project Repository:**
     ```bash
-    git clone https://github.com/Jacktheguys/GuildBridgeBot
+    git clone https://github.com/Swig4/GuildBridgeBot
     ```
 
 5. **Set Up Configuration Files:**
