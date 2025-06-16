@@ -65,8 +65,8 @@ Follow these instructions to copy the repository to a new server.
 3. **Install Python3 and Virtual Environment:**
     ```bash
     sudo apt-get update
-    sudo apt install python3-pip
-    sudo apt install python3.12-venv
+    sudo apt install python3-pip -y
+    sudo apt install python3.12-venv -y
     ```
 
 4. **Clone the Project Repository:**

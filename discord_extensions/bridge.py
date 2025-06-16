@@ -269,7 +269,6 @@ class Bridge(commands.Cog):
         await self.bot.mineflayer_bot.chat("/g info")
 
     @commands.command()
-    @has_command_role
     async def warpout(self, ctx, username):
         msg = await ctx.reply(
             embed=discord.Embed(

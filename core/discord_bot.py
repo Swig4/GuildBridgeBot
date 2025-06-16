@@ -50,6 +50,7 @@ class DiscordBridgeBot(commands.Bot):
         self.mineflayer_bot = None
         self.redis_manager = None
         self.invite_queue: asyncio.Queue | None = None
+        self.warpout_queue: asyncio.Queue | None = None
         self._current_invite_future: asyncio.Future | None = None
         self._current_warpout_future: asyncio.Future | None = None
         self._proc_inv_task: asyncio.Task | None = None
@@ -199,13 +200,13 @@ class DiscordBridgeBot(commands.Bot):
         await super().close()
 
     async def _process_warpouts(self):
-        if not hasattr(self, "warpout_queue") or self.warpout_queue is None:
+        if self.warpout_queue is None:
             self.warpout_queue = asyncio.Queue()
         try:
             while not self.is_closed():
                 print(f"{Color.CYAN}Discord{Color.RESET} > Waiting for warpout...")
                 username, fut = await self.warpout_queue.get()
-                print(f"{Color.CYAN}Discord{Color.RESET} > Processing warpout for {username}")
+                print(f"{Color.CYAN}Discord{Color.RESET} > Sending party invite to {username}")
                 self._current_warpout_future = fut
                 await self.mineflayer_bot.chat(f"/p {username}")
 
@@ -215,24 +216,13 @@ class DiscordBridgeBot(commands.Bot):
                     if not fut.done():
                         fut.set_result((False, "timeout"))
                         print(f"{Color.CYAN}Discord{Color.RESET} > Warpout timed out.")
-                    continue
-
-                await self.mineflayer_bot.chat("/l")
-                await asyncio.sleep(2.5)
-                await self.mineflayer_bot.chat("/p warp")
-                await asyncio.sleep(0.5)
-                await self.mineflayer_bot.chat("/p disband")
-
-                if not fut.done():
-                    fut.set_result((True, "success"))
-
                 self._current_warpout_future = None
         except asyncio.CancelledError:
             pass
         except Exception as e:
             print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor error: {e}")
             traceback.print_exc()
-        print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor has stopped.")
+
 
     async def _handle_warp_sequence(self):
         try:
@@ -250,6 +240,7 @@ class DiscordBridgeBot(commands.Bot):
                 self._current_warpout_future.set_result((False, "error"))
         finally:
             self._current_warpout_future = None
+
 
 
     async def _process_invites(self):
@@ -921,9 +912,11 @@ class DiscordBridgeBot(commands.Bot):
                 self.dispatch("hypixel_guild_invite_recieved", playername)
                 await self.send_debug_message("Sending invite recieved message")
                 await self.send_message(embed=embed)
-            elif "has joined the party." in message and hasattr(self, "_current_warpout_future") and self._current_warpout_future:
-                print(f"{Color.CYAN}Discord{Color.RESET} > User joined party, starting warp sequence.")
-                asyncio.create_task(self._handle_warp_sequence())
+            elif "has joined the party." in message:
+                if self._current_warpout_future and not self._current_warpout_future.done():
+                    print(f"{Color.CYAN}Discord{Color.RESET} > User joined party, starting warp sequence.")
+                    await self._handle_warp_sequence()
+
 
             elif message.strip() == "":
                 return
