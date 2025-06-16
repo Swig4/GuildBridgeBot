@@ -298,7 +298,6 @@ class Bridge(commands.Cog):
             )
             await msg.edit(embed=embed)
 
-
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.channel)
     @has_command_role

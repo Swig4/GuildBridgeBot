@@ -51,7 +51,9 @@ class DiscordBridgeBot(commands.Bot):
         self.redis_manager = None
         self.invite_queue: asyncio.Queue | None = None
         self._current_invite_future: asyncio.Future | None = None
+        self._current_warpout_future: asyncio.Future | None = None
         self._proc_inv_task: asyncio.Task | None = None
+        self._proc_warp_task: asyncio.Task | None = None
         self.webhook: discord.Webhook | None = None
         self.officer_webhook: discord.Webhook | None = None
         self.debug_webhook: discord.Webhook | None = None
@@ -78,6 +80,13 @@ class DiscordBridgeBot(commands.Bot):
         self.invite_queue.put_nowait([username, fut])
         if self._proc_inv_task is None or self._proc_inv_task.done():
             self._proc_inv_task = asyncio.create_task(self._process_invites())
+        return await fut
+    
+    async def send_warpout(self, username):
+        if not hasattr(self, "warpout_queue") or self.warpout_queue is None:
+            self.warpout_queue = asyncio.Queue()
+        fut = asyncio.get_event_loop().create_future()
+        await self.warpout_queue.put((username, fut))
         return await fut
 
     def init_webhooks(self):
@@ -120,6 +129,9 @@ class DiscordBridgeBot(commands.Bot):
         if self._proc_inv_task is None or self._proc_inv_task.done():
             print(f"{Color.CYAN}Discord{Color.RESET} > Starting the invite processor...")
             self._proc_inv_task = asyncio.create_task(self._process_invites())
+        if self._proc_warp_task is None or self._proc_warp_task.done():
+            print(f"{Color.CYAN}Discord{Color.RESET} > Starting the warpout processor...")
+            self._proc_warp_task = asyncio.create_task(self._process_warpouts())
         # warning message
         if (DiscordConfig.allowCrosschat or DiscordConfig.allowOfficerCrosschat) and not DiscordConfig.ignoreCrosschatWarning:
             prefix = f"{Color.CYAN}Discord{Color.RESET} > {Color.YELLOW}[WARNING]{Color.RESET}"
@@ -186,13 +198,6 @@ class DiscordBridgeBot(commands.Bot):
             print(f"{Color.CYAN}Discord{Color.RESET} > Redis has been stopped.")
         await super().close()
 
-    async def send_warpout(self, username):
-        if not hasattr(self, "warpout_queue") or self.warpout_queue is None:
-            self.warpout_queue = asyncio.Queue()
-        fut = asyncio.get_event_loop().create_future()
-        await self.warpout_queue.put((username, fut))
-        return await fut
-
     async def _process_warpouts(self):
         if not hasattr(self, "warpout_queue") or self.warpout_queue is None:
             self.warpout_queue = asyncio.Queue()
@@ -212,10 +217,15 @@ class DiscordBridgeBot(commands.Bot):
                         print(f"{Color.CYAN}Discord{Color.RESET} > Warpout timed out.")
                     continue
                 
+                await self.mineflayer_bot.chat("/l")
+                await asyncio.sleep(2.5)
                 await self.mineflayer_bot.chat("/p warp")
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
                 await self.mineflayer_bot.chat("/p disband")
-                fut.set_result((True, "success"))
+    
+                if not fut.done():
+                    fut.set_result((True, "success"))
+    
                 self._current_warpout_future = None
         except asyncio.CancelledError:
             pass
@@ -223,6 +233,7 @@ class DiscordBridgeBot(commands.Bot):
             print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor error: {e}")
             traceback.print_exc()
         print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor has stopped.")
+
 
 
     async def _process_invites(self):
