@@ -211,7 +211,7 @@ class DiscordBridgeBot(commands.Bot):
                 await self.mineflayer_bot.chat(f"/p {username}")
 
                 try:
-                    await asyncio.wait_for(fut, timeout=15)
+                    await asyncio.wait_for(fut, timeout=30)
                 except asyncio.TimeoutError:
                     if not fut.done():
                         fut.set_result((False, "timeout"))
@@ -222,7 +222,6 @@ class DiscordBridgeBot(commands.Bot):
         except Exception as e:
             print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor error: {e}")
             traceback.print_exc()
-
 
     async def _handle_warp_sequence(self):
         try:
@@ -240,8 +239,6 @@ class DiscordBridgeBot(commands.Bot):
                 self._current_warpout_future.set_result((False, "error"))
         finally:
             self._current_warpout_future = None
-
-
 
     async def _process_invites(self):
         if self.invite_queue is None:
@@ -471,6 +468,11 @@ class DiscordBridgeBot(commands.Bot):
     # hypixel_guild_message_send_failed
     async def send_discord_message(self, message):
         try:
+            if " joined the party." in message:
+                if self._current_warpout_future and not self._current_warpout_future.done():
+                    print(f"{Color.CYAN}Discord{Color.RESET} > User joined party, starting warp sequence.")
+                    await self._handle_warp_sequence()
+
             if "Unknown command" in message:
                 self.dispatch("minecraft_pong")
             if message.startswith("Guild >"):
@@ -591,6 +593,7 @@ class DiscordBridgeBot(commands.Bot):
                 self.dispatch("hypixel_guild_member_join", playername)
                 await self.send_debug_message("Sending guild member joined message")
                 await self.send_message(embed=embed)
+                await self.mineflayer_bot.chat(f"/gc Welcome {playername}!")
             elif " left the guild!" in message:
                 message = message.split()
                 if "[VIP]" in message or "[VIP+]" in message or "[MVP]" in message or "[MVP+]" in message or "[MVP++]" in message:
@@ -912,10 +915,6 @@ class DiscordBridgeBot(commands.Bot):
                 self.dispatch("hypixel_guild_invite_recieved", playername)
                 await self.send_debug_message("Sending invite recieved message")
                 await self.send_message(embed=embed)
-            elif "joined the party." in message:
-                if self._current_warpout_future and not self._current_warpout_future.done():
-                    print(f"{Color.CYAN}Discord{Color.RESET} > User joined party, starting warp sequence.")
-                    await self._handle_warp_sequence()
 
             elif message.strip() == "":
                 return
