@@ -468,10 +468,13 @@ class DiscordBridgeBot(commands.Bot):
     # hypixel_guild_message_send_failed
     async def send_discord_message(self, message):
         try:
-            if " joined the party." in message:
-                if self._current_warpout_future and not self._current_warpout_future.done():
-                    print(f"{Color.CYAN}Discord{Color.RESET} > User joined party, starting warp sequence.")
-                    await self._handle_warp_sequence()
+            match = re.compile(r"\[(?:\w+\+{0,2})\] (?P<username>\w+) joined the party\.").search(
+                re.sub(r"§[0-9a-fk-or]", "", message, flags=re.IGNORECASE)
+            )
+            if match:
+                username = match.group("username")
+                print(f"{Color.CYAN}Discord{Color.RESET} > Detected {username} joined the party, starting warp sequence.")
+                await self._handle_warp_sequence()
 
             if "Unknown command" in message:
                 self.dispatch("minecraft_pong")
