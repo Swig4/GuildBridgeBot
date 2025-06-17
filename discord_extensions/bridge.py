@@ -272,30 +272,30 @@ class Bridge(commands.Cog):
     async def warpout(self, ctx, username):
         msg = await ctx.reply(
             embed=discord.Embed(
-                description="Sending warpout command...",
+                description="Sending party command...",
                 color=discord.Color.gold()
             )
         )
-        result = await self.bot.send_warpout(username)
-        await self.bot.send_debug_message(f"Warpout to {username}: {result}")
-        if not result[0] and result[1] == "timeout":
+        success, reason = await self.bot.send_warpout(username)
+        await self.bot.send_debug_message(f"Warpout to {username}: {success}, {reason}")
+
+        if not success and reason == "timeout":
             embed = discord.Embed(
                 description="User did not accept the party invite in time.",
                 color=discord.Color.red()
             )
-            await msg.edit(embed=embed)
-        elif not result[0]:
+        elif not success:
             embed = discord.Embed(
-                description=f"Could not warpout {username}. Error: {result[1]}",
+                description=f"Could not warpout {username}. Error: {reason}",
                 color=discord.Color.red()
             )
-            await msg.edit(embed=embed)
         else:
             embed = discord.Embed(
                 description=f"Warped {username} successfully!",
                 color=discord.Color.green()
             )
-            await msg.edit(embed=embed)
+
+        await msg.edit(embed=embed)
 
     @commands.command()
     @commands.cooldown(1, 3, commands.BucketType.channel)

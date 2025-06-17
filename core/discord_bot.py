@@ -216,6 +216,7 @@ class DiscordBridgeBot(commands.Bot):
                     if not fut.done():
                         fut.set_result((False, "timeout"))
                         print(f"{Color.CYAN}Discord{Color.RESET} > Warpout timed out.")
+                        await self.mineflayer_bot.chat(f"/p leave")
                 self._current_warpout_future = None
         except asyncio.CancelledError:
             pass
