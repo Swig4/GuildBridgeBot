@@ -468,14 +468,6 @@ class DiscordBridgeBot(commands.Bot):
     # hypixel_guild_message_send_failed
     async def send_discord_message(self, message):
         try:
-            match = re.compile(r"\[(?:\w+\+{0,2})\] (?P<username>\w+) joined the party\.").search(
-                re.sub(r"§[0-9a-fk-or]", "", message, flags=re.IGNORECASE)
-            )
-            if match:
-                username = match.group("username")
-                print(f"{Color.CYAN}Discord{Color.RESET} > Detected {username} joined the party, starting warp sequence.")
-                await self._handle_warp_sequence()
-
             if "Unknown command" in message:
                 self.dispatch("minecraft_pong")
             if message.startswith("Guild >"):
@@ -597,6 +589,15 @@ class DiscordBridgeBot(commands.Bot):
                 await self.send_debug_message("Sending guild member joined message")
                 await self.send_message(embed=embed)
                 await self.mineflayer_bot.chat(f"/gc Welcome {playername}!")
+            elif " joined the party." in message:
+                parts = message.split()
+                if any(rank in parts for rank in ["[VIP]", "[VIP+]", "[MVP]", "[MVP+]", "[MVP++]"]):
+                    playername = parts[1]
+                else:
+                    playername = parts[0]
+                print(f"{Color.CYAN}Discord{Color.RESET} > Detected {playername} joined the party, starting warp sequence.")
+                await self._handle_warp_sequence()
+
             elif " left the guild!" in message:
                 message = message.split()
                 if "[VIP]" in message or "[VIP+]" in message or "[MVP]" in message or "[MVP+]" in message or "[MVP++]" in message:
