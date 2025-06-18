@@ -242,6 +242,17 @@ class Bridge(commands.Cog):
             )
 
     @commands.command()
+    @has_command_role
+    async def announce(self, ctx, announcement):
+        await self.bot.mineflayer_bot.chat(f"/gc {announcement}")
+        await ctx.reply(
+            embed=discord.Embed(
+                description="Done!",
+                color=discord.Color.green()
+            )
+        )
+
+    @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def online(self, ctx):
         await self.bot.mineflayer_bot.chat("/g online")

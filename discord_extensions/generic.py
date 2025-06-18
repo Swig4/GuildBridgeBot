@@ -28,7 +28,8 @@ HELP_EMBED.add_field(
             f"``{DiscordConfig.prefix}mute <username> <time>`` Mutes the user for a specific time\n"
             f"``{DiscordConfig.prefix}unmute <username>`` Unmutes the user\n"
             f"``{DiscordConfig.prefix}log [params]`` Shows guild audit logs\n"
-            f"``{DiscordConfig.prefix}warpout <user>`` Warps a user out of their current lobby",
+            f"``{DiscordConfig.prefix}warpout <user>`` Warps a user out of their current lobby\n"
+            f"``{DiscordConfig.prefix}announce <announcement>`` Sends an announcement to guild chat.",
     inline=False
 )
 HELP_EMBED.add_field(
