@@ -112,6 +112,14 @@ Follow these instructions to copy the repository to a new server.
     pm2 start main.py --name <NAME_OF_GUILD>-BridgeBot --interpreter ./venv/bin/python --restart-delay=3000
     ```
 
+6. **Open logs**
+    ```bash
+    pm2 log
+    ```
+
+7. **Allow access to the account**
+    wait for everything to init, then a microsoft link will be provided.
+
 ---
 
 ## Commands
@@ -120,31 +128,33 @@ Follow these instructions to copy the repository to a new server.
 
 | Command | Description |
 |---------|-------------|
-| `!invite <username>` | Invite a player to the guild |
-| `!kick <username> [reason]` | Kick a player from the guild |
-| `!promote <username>` | Promote a guild member |
-| `!demote <username>` | Demote a guild member |
-| `!setrank <username> <rank>` | Set a member's rank |
-| `!mute <username> <duration>` | Mute a guild member |
-| `!unmute <username>` | Unmute a guild member |
+| `.invite <username>` | Invite a player to the guild |
+| `.kick <username> [reason]` | Kick a player from the guild |
+| `.promote <username>` | Promote a guild member |
+| `.demote <username>` | Demote a guild member |
+| `.setrank <username> <rank>` | Set a member's rank |
+| `.mute <username> <duration>` | Mute a guild member |
+| `.unmute <username>` | Unmute a guild member |
+| `.announce <message>` | Sends an announcement in guild chat |
 
 ### Communication Control
 
 | Command | Description |
 |---------|-------------|
-| `!notifications` | Toggle join/leave notifications |
-| `!toggleaccept` | Toggle auto-accepting guild invites |
+| `.notifications` | Toggle join/leave notifications |
+| `.toggleaccept` | Toggle auto-accepting guild invites |
 
 ### Miscellaneous
 
 | Command | Description |
 |---------|-------------|
-| `!help` | Display all available commands and bot information |
-| `!online` | Check online guild members |
-| `!list` | Show a list of all guild members |
-| `!top` | Shows xperience ranking of members for the day |
-| `!info` | Shows Guild Information |
-| `!override <command>` | Force the bot to use a given command |
+| `.help` | Display all available commands and bot information |
+| `.online` | Check online guild members |
+| `.list` | Show a list of all guild members |
+| `.top` | Shows xperience ranking of members for the day |
+| `.info` | Shows Guild Information |
+| `.override <command>` | Force the bot to use a given command |
+| `.warpout <playername>` | Attempts to warpout the player |
 
 Note: Some commands may require appropriate permissions in both Discord and the Hypixel guild.
 
