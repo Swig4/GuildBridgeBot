@@ -209,6 +209,7 @@ class DiscordBridgeBot(commands.Bot):
                 print(f"{Color.CYAN}Discord{Color.RESET} > Sending party invite to {username}")
                 self._current_warpout_future = fut
                 await self.mineflayer_bot.chat(f"/p {username}")
+                asyncio.create_task(self._handle_warp_sequence())
 
                 try:
                     await asyncio.wait_for(fut, timeout=30)
@@ -223,6 +224,7 @@ class DiscordBridgeBot(commands.Bot):
         except Exception as e:
             print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor error: {e}")
             traceback.print_exc()
+
 
     async def _handle_warp_sequence(self):
         try:
