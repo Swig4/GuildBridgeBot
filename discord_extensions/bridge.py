@@ -243,7 +243,7 @@ class Bridge(commands.Cog):
 
     @commands.command()
     @has_command_role
-    async def announce(self, ctx, announcement):
+    async def announce(self, ctx, *, announcement):
         await self.bot.mineflayer_bot.chat(f"/gc [GUILD ANNOUNCEMENT] {announcement}")
         await ctx.reply(
             embed=discord.Embed(
