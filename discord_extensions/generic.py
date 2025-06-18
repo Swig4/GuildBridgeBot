@@ -29,8 +29,8 @@ HELP_EMBED.add_field(
             f"``{DiscordConfig.prefix}unmute <username>`` Unmutes the user\n"
             f"``{DiscordConfig.prefix}log [params]`` Shows guild audit logs\n"
             f"``{DiscordConfig.prefix}warpout <user>`` Warps a user out of their current lobby\n"
-            f"``{DiscordConfig.prefix}announce <announcement>`` Sends an announcement to guild chat."
-            f"``{DiscordConfig.prefix}update`` Sends an announcement that the bot is about to undergo maintenance",
+            f"``{DiscordConfig.prefix}announce <announcement>`` Sends an announcement to guild chat.\n"
+            f"``{DiscordConfig.prefix}update`` Auto updates the bot.",
     inline=False
 )
 HELP_EMBED.add_field(
