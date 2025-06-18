@@ -16,7 +16,7 @@
         "commandRole": "",
         "overrideRole": "",
         "ownerId": "",
-        "prefix": "!",
+        "prefix": ".",
         "webhookURL": "",
         "officerWebhookURL": "",
         "debugWebhookURL": "",

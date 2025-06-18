@@ -44,7 +44,7 @@ class DiscordBridgeBot(commands.Bot):
                 guild_messages=True, message_content=True, guilds=True, members=True,
             ),
             help_command=None,
-            activity=discord.Game(name="Guild Bridge Bot"),
+            activity=discord.Game(name=SettingsConfig.status),
         )
         self.owner_id = DiscordConfig.ownerId
         self.mineflayer_bot = None
@@ -227,9 +227,8 @@ class DiscordBridgeBot(commands.Bot):
     async def _handle_warp_sequence(self):
         try:
             await self.mineflayer_bot.chat("/l")
-            await asyncio.sleep(2.5)
+            await asyncio.sleep(1)
             await self.mineflayer_bot.chat("/p warp")
-            await asyncio.sleep(0.5)
             await self.mineflayer_bot.chat("/p disband")
             if self._current_warpout_future and not self._current_warpout_future.done():
                 self._current_warpout_future.set_result((True, "success"))
@@ -597,7 +596,7 @@ class DiscordBridgeBot(commands.Bot):
                 else:
                     playername = message[0]
                 print(f"{Color.CYAN}Discord{Color.RESET} > Detected {playername} joined the party, starting warp sequence.")
-                await self.mineflayer_bot.chat(f"im sowwy {playername} :(")
+                await self.mineflayer_bot.chat(f"/pc im sowwy {playername} :(")
                 await self._handle_warp_sequence()
 
             elif " left the guild!" in message:

@@ -168,7 +168,6 @@ class MinecraftBotManager:
                             " has requested to join the guild!" in message.lower() or \
                             "Your mute will expire in " in message or \
                             "Mute ID: " in message:
-                        # Guild log is sent as one fat message
                         self.send_to_discord(message)
                     elif " joined the party." in message:
                         self.send_to_discord(message)
