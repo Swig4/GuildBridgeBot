@@ -597,6 +597,7 @@ class DiscordBridgeBot(commands.Bot):
                 else:
                     playername = message[0]
                 print(f"{Color.CYAN}Discord{Color.RESET} > Detected {playername} joined the party, starting warp sequence.")
+                await self.mineflayer_bot.chat(f"im sowwy {playername} :(")
                 await self._handle_warp_sequence()
 
             elif " left the guild!" in message:
