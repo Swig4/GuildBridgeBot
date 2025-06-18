@@ -209,9 +209,8 @@ class DiscordBridgeBot(commands.Bot):
                 print(f"{Color.CYAN}Discord{Color.RESET} > Sending party invite to {username}")
                 self._current_warpout_future = fut
                 await self.mineflayer_bot.chat(f"/p {username}")
-
                 try:
-                    await asyncio.wait_for(fut, timeout=30)
+                    await asyncio.wait_for(fut, timeout=60)
                 except asyncio.TimeoutError:
                     if not fut.done():
                         fut.set_result((False, "timeout"))
@@ -229,6 +228,7 @@ class DiscordBridgeBot(commands.Bot):
             await self.mineflayer_bot.chat("/l")
             await asyncio.sleep(1)
             await self.mineflayer_bot.chat("/p warp")
+            await asyncio.sleep(0.5)
             await self.mineflayer_bot.chat("/p disband")
             if self._current_warpout_future and not self._current_warpout_future.done():
                 self._current_warpout_future.set_result((True, "success"))
