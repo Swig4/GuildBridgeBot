@@ -155,6 +155,7 @@ Follow these instructions to copy the repository to a new server.
 | `.info` | Shows Guild Information |
 | `.override <command>` | Force the bot to use a given command |
 | `.warpout <playername>` | Attempts to warpout the player |
+| `.update` | Sends an announcement that the bot is about to undergo maintenance |
 
 Note: Some commands may require appropriate permissions in both Discord and the Hypixel guild.
 

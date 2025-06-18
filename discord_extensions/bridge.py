@@ -253,6 +253,17 @@ class Bridge(commands.Cog):
         )
 
     @commands.command()
+    @has_command_role
+    async def update(self, ctx, *, announcement):
+        await self.bot.mineflayer_bot.chat(f"/gc [Bridge Bot Update] The bridge bot is shutting down for an update, it will be back shortly.")
+        await ctx.reply(
+            embed=discord.Embed(
+                description="The bridge bot is shutting down for an update, it will be back shortly.",
+                color=discord.Color.yellow()
+            )
+        )
+
+    @commands.command()
     @commands.cooldown(1, 5, commands.BucketType.channel)
     async def online(self, ctx):
         await self.bot.mineflayer_bot.chat("/g online")
