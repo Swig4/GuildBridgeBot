@@ -76,6 +76,7 @@ class MinecraftBotManager:
         def login(this):
             if not self._online:
                 self.send_to_discord("Bot Online")
+                self.bot.chat("/gc [Bridge Bot] Bot Online")
                 print(f"{Color.GREEN}Minecraft{Color.RESET} > Bot is logged in as", self.bot.username)
             self._online = True
             self.client.dispatch("minecraft_ready")

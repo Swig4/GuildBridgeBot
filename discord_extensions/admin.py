@@ -55,9 +55,14 @@ class Admin(commands.Cog):
     @commands.command()
     @has_override_role
     async def update(self, ctx):
-        embedVar = discord.Embed(color=0x1ABC9C).set_author(name="Updating the bot...")
-        await ctx.send(embed=embedVar)
-        url = "https://api.github.com/repos/SkyKings-Network/GuildBridgeBot/commits/main"
+        await self.bot.mineflayer_bot.chat(f"/gc [Bridge Bot] The bridge bot is shutting down for an update, it will be back shortly.")
+        await ctx.reply(
+            embed=discord.Embed(
+                description="The bridge bot is shutting down for an update, it will be back shortly.",
+                color=discord.Color.yellow()
+            )
+        )
+        url = "https://api.github.com/repos/Swig4/GuildBridgeBot/commits/main"
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 if response.status == 200:
