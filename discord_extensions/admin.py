@@ -5,10 +5,11 @@ import discord
 from discord.ext import commands, tasks
 from core.config import DiscordConfig, SettingsConfig, DataConfig
 from core.checks import has_override_role, has_command_role
-
+from pathlib import Path
 import json
 import aiohttp
 from datetime import datetime
+import subprocess
 
 class Admin(commands.Cog):
     def __init__(self, bot):
@@ -52,45 +53,49 @@ class Admin(commands.Cog):
         embedVar = discord.Embed(color=0x1ABC9C, description=f"`/{command}` has been sent!")
         await ctx.send(embed=embedVar)
 
-    @commands.command()
-    @has_override_role
-    async def update(self, ctx):
-        await self.bot.mineflayer_bot.chat(f"/gc [Bridge Bot] The bridge bot is shutting down for an update, it will be back shortly.")
-        await ctx.reply(
-            embed=discord.Embed(
-                description="The bridge bot is shutting down for an update, it will be back shortly.",
-                color=discord.Color.yellow()
-            )
+@commands.command()
+@has_override_role
+async def update(self, ctx):
+    await self.bot.mineflayer_bot.chat(
+        "/gc [Bridge Bot] The bridge bot is shutting down for an update, it will be back shortly."
+    )
+    await ctx.reply(
+        embed=discord.Embed(
+            description="The bridge bot is shutting down for an update, it will be back shortly.",
+            color=discord.Color.yellow()
         )
-        url = "https://api.github.com/repos/Swig4/GuildBridgeBot/commits/main"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    
-                    latest_commit_date = data["commit"]["committer"]["date"]
-                    latest_commit_date = datetime.strptime(latest_commit_date, "%Y-%m-%dT%H:%M:%SZ")
+    )
 
-                    with open("config.json", "r") as f:
-                        config = json.load(f)
-                    
-                    config["data"]["current_version"] = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-                    config["data"]["latest_version"] = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+    url = "https://api.github.com/repos/Swig4/GuildBridgeBot/commits/main"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                data = await response.json()
 
-                    with open("config.json", "w") as f:
-                        json.dump(config, f, indent=4)
-                    
-                    DataConfig.current_version = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-                    DataConfig.latest_version = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
-                        
-                    
-                    print(f"Updated config.json with latest commit date: {latest_commit_date}")
-                else:
-                    print(f"Failed to check for updates. HTTP Status: {response.status}")
+                latest_commit_date = data["commit"]["committer"]["date"]
+                latest_commit_date = datetime.strptime(latest_commit_date, "%Y-%m-%dT%H:%M:%SZ")
 
-        os.system("git pull")
-        await self.bot.close()
-        await asyncio.sleep(10)
+                with open("config.json", "r") as f:
+                    config = json.load(f)
+
+                config["data"]["current_version"] = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+                config["data"]["latest_version"] = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+                with open("config.json", "w") as f:
+                    json.dump(config, f, indent=4)
+
+                DataConfig.current_version = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+                DataConfig.latest_version = latest_commit_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+                print(f"Updated config.json with latest commit date: {latest_commit_date}")
+            else:
+                print(f"Failed to check for updates. HTTP Status: {response.status}")
+
+    git_path = str(Path.home() / "GuildBridgeBot")
+    subprocess.run(["git", "pull"], cwd=git_path)
+
+    await self.bot.close()
+    await asyncio.sleep(10)
 
     @commands.command()
     @has_override_role
