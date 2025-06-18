@@ -44,7 +44,7 @@ class DiscordBridgeBot(commands.Bot):
                 guild_messages=True, message_content=True, guilds=True, members=True,
             ),
             help_command=None,
-            activity=discord.Game(name=SettingsConfig.status),
+            activity=discord.Activity(type=discord.ActivityType.watching, name=f"Over {DiscordConfig.serverName}"),
         )
         self.owner_id = DiscordConfig.ownerId
         self.mineflayer_bot = None
