@@ -170,6 +170,8 @@ class MinecraftBotManager:
                             "Mute ID: " in message:
                         # Guild log is sent as one fat message
                         self.send_to_discord(message)
+                    elif " joined the party." in message:
+                        self.send_to_discord(message)
 
     def send_minecraft_message(self, discord, message, type):
         if type == "General":
