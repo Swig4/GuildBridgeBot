@@ -5,7 +5,7 @@ import traceback
 import discord
 from discord.ext import commands
 from core.config import DiscordConfig, SettingsConfig
-from core.checks import has_command_role
+from core.checks import has_command_role, has_blacklist_role
 
 
 class Bridge(commands.Cog):
@@ -280,13 +280,23 @@ class Bridge(commands.Cog):
         await self.bot.mineflayer_bot.chat("/g info")
 
     @commands.command()
+    @has_blacklist_role
     async def warpout(self, ctx, username):
+        if self.bot._current_warpout_future and not self.bot._current_warpout_future.done():
+            return await ctx.reply(
+                embed=discord.Embed(
+                    description="A warpout is already in progress. Please wait until it finishes.",
+                    color=discord.Color.red()
+                )
+            )
+
         msg = await ctx.reply(
             embed=discord.Embed(
                 description="Sending party command...",
                 color=discord.Color.gold()
             )
         )
+
         success, reason = await self.bot.send_warpout(username)
         await self.bot.send_debug_message(f"Warpout to {username}: {success}, {reason}")
 
@@ -297,7 +307,7 @@ class Bridge(commands.Cog):
             )
         elif not success:
             embed = discord.Embed(
-                description=f"Could not warpout {username}. Error: {reason}",
+                description=f"Could not warpout {username}.",
                 color=discord.Color.red()
             )
         else:

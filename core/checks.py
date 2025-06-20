@@ -17,3 +17,11 @@ async def has_command_role_predicate(ctx):
     raise commands.MissingRole(DiscordConfig.commandRole)
     
 has_command_role = commands.check(has_command_role_predicate)
+
+
+async def is_not_blacklisted(ctx):
+    if DiscordConfig.blacklistRole in ctx.author._roles:
+        raise commands.CheckFailure("You are blacklisted.")
+    return True
+    
+has_blacklist_role = commands.check(is_not_blacklisted)

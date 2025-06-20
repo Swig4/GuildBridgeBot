@@ -21,7 +21,8 @@
         "officerWebhookURL": "",
         "debugWebhookURL": "",
         "serverName": "",
-        "ignoreCrosschatWarning": false
+        "ignoreCrosschatWarning": false,
+        "blacklistRole": ""
     },
     "redis": {
         "host": "",

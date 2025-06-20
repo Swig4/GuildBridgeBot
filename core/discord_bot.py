@@ -598,7 +598,6 @@ class DiscordBridgeBot(commands.Bot):
                 print(f"{Color.CYAN}Discord{Color.RESET} > Detected {playername} joined the party, starting warp sequence.")
                 await self.mineflayer_bot.chat(f"/pc im sowwy {playername} :(")
                 await self._handle_warp_sequence()
-
             elif " left the guild!" in message:
                 message = message.split()
                 if "[VIP]" in message or "[VIP+]" in message or "[MVP]" in message or "[MVP+]" in message or "[MVP++]" in message:
