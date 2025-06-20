@@ -302,7 +302,7 @@ class Bridge(commands.Cog):
 
         if not success and reason == "timeout":
             embed = discord.Embed(
-                description="User did not accept the party invite in time.",
+                description=f"{username} did not accept the party invite in time.",
                 color=discord.Color.red()
             )
         elif not success:

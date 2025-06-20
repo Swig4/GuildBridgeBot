@@ -223,15 +223,19 @@ class DiscordBridgeBot(commands.Bot):
             print(f"{Color.CYAN}Discord{Color.RESET} > Warpout processor error: {e}")
             traceback.print_exc()
 
-    async def _handle_warp_sequence(self):
+    async def _handle_warp_sequence(self, ended):
         try:
-            await self.mineflayer_bot.chat("/l")
-            await asyncio.sleep(1)
-            await self.mineflayer_bot.chat("/p warp")
-            await asyncio.sleep(0.5)
-            await self.mineflayer_bot.chat("/p disband")
-            if self._current_warpout_future and not self._current_warpout_future.done():
-                self._current_warpout_future.set_result((True, "success"))
+            if ended:
+                await self.mineflayer_bot.chat("/l")
+                await asyncio.sleep(1)
+                await self.mineflayer_bot.chat("/p warp")
+                await asyncio.sleep(0.5)
+                await self.mineflayer_bot.chat("/p disband")
+                if self._current_warpout_future and not self._current_warpout_future.done():
+                    self._current_warpout_future.set_result((True, "success"))
+            else:
+                if self._current_warpout_future and not self._current_warpout_future.done():
+                    self._current_warpout_future.set_result((False, "timeout"))
         except Exception as e:
             print(f"{Color.CYAN}Discord{Color.RESET} > Warpout error during warp sequence: {e}")
             traceback.print_exc()
@@ -598,17 +602,14 @@ class DiscordBridgeBot(commands.Bot):
                     playername = message[0]
                 print(f"{Color.CYAN}Discord{Color.RESET} > Detected {playername} joined the party, starting warp sequence.")
                 await self.mineflayer_bot.chat(f"/pc im sowwy {playername} :(")
-                await self._handle_warp_sequence()
+                await self._handle_warp_sequence(ended=True)
             elif "The party invite to " in message:
                 message = message.split()
                 if "[VIP]" in message or "[VIP+]" in message or "[MVP]" in message or "[MVP+]" in message or "[MVP++]" in message:
                     playername = message[1]
                 else:
                     playername = message[0]
-                try:
-                    self._current_warpout_future.set_result((False, "timeout"))
-                finally:
-                    self._current_warpout_future = None
+                await self._handle_warp_sequence(ended=False)
 
             elif " left the guild!" in message:
                 message = message.split()
