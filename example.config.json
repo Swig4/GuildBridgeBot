@@ -22,7 +22,7 @@
         "debugWebhookURL": "",
         "serverName": "",
         "ignoreCrosschatWarning": false,
-        "blacklistRole": ""
+        "blacklistRole": 123
     },
     "redis": {
         "host": "",
