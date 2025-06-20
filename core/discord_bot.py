@@ -256,6 +256,7 @@ class DiscordBridgeBot(commands.Bot):
                     pass
                 if not fut.done():
                     fut.set_result((False, "timeout"))
+                    self._current_warpout_future.set_result((False, "timeout"))
                     print(f"{Color.CYAN}Discord{Color.RESET} > Invite timed out.")
                 self._current_invite_future = None
         except asyncio.CancelledError:
@@ -598,6 +599,17 @@ class DiscordBridgeBot(commands.Bot):
                 print(f"{Color.CYAN}Discord{Color.RESET} > Detected {playername} joined the party, starting warp sequence.")
                 await self.mineflayer_bot.chat(f"/pc im sowwy {playername} :(")
                 await self._handle_warp_sequence()
+            elif "The party invite to " in message:
+                message = message.split()
+                if "[VIP]" in message or "[VIP+]" in message or "[MVP]" in message or "[MVP+]" in message or "[MVP++]" in message:
+                    playername = message[1]
+                else:
+                    playername = message[0]
+                try:
+                    self._current_warpout_future.set_result((False, "timeout"))
+                finally:
+                    self._current_warpout_future = None
+
             elif " left the guild!" in message:
                 message = message.split()
                 if "[VIP]" in message or "[VIP+]" in message or "[MVP]" in message or "[MVP+]" in message or "[MVP++]" in message:

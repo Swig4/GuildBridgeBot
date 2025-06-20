@@ -172,6 +172,8 @@ class MinecraftBotManager:
                         self.send_to_discord(message)
                     elif " joined the party." in message:
                         self.send_to_discord(message)
+                    elif "The party invite to " in message:
+                        self.send_to_discord(message)
 
     def send_minecraft_message(self, discord, message, type):
         if type == "General":
